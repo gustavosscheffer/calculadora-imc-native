@@ -1,89 +1,94 @@
-import React from 'react';
-import {StyleSheet,Text,TextInput,TouchableOpacity,View} from 'react-native';
+import React, { useState, useCallback } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { typesIMC } from "./utils/variables";
 
-export default class Home extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {altura:0,massa:0,resultado:0,resultadoText:""}
-    this.calcular = this.calcular.bind(this)
-  }
+function Home() {
+  const [altura, setAltura] = useState(0);
+  const [massa, setMassa] = useState(0);
+  const [resultado, setResultado] = useState(0);
+  const [resultadoText, setResultadoText] = useState("");
 
-calcular(){
-  let imc = this.state.massa / (this.state.altura * this.state.altura)
-  let calculo = this.state
-  calculo.resultado = imc
-  if(calculo.resultado < 16){
-    calculo.resultadoText ='Muito abaixo do peso'
-  }
-   else if (calculo.resultado < 17){
-    calculo.resultadoText ='Moderadamente abaixo do peso'
-   }
-   else if (calculo.resultado < 18.5){
-    calculo.resultadoText ='Abaixo do peso'
-   }
-   else if (calculo.resultado < 25) {
-    calculo.resultadoText ='Saudavel'
-   }
-   else if (calculo.resultado < 30) {
-    calculo.resultadoText ='Sobrepeso'
-   }
-   else if (calculo.resultado < 35) {
-    calculo.resultadoText ='Obesidade Grau 1°'
-   }
-   else if (calculo.resultado < 40) {
-    calculo.resultadoText ='Obesidade Grau 2°'
-   }
-   else{
-    calculo.resultadoText ='Obesidade Grau 3°'
-   }
-  this.setState(calculo)
- }
+  const textBaseadInIMC = useCallback((imc) => {
+    for (const item of typesIMC) {
+      if (item.value > imc) {
+        return item.title;
+      }
+    }
+    return "Obesidade Grau 3°";
+  }, []);
 
- render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.entrada}>
-          <TextInput autoCapitalize="none" placeholder="Altura" keyboardType="numeric" style={styles.input} onChangeText={(altura)=>{this.setState({altura})}}/>
-          <TextInput autoCapitalize="none" placeholder="Massa"  keyboardType="numeric" style={styles.input} onChangeText={(massa)=>{this.setState({massa})}}/>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={this.calcular}><Text style={styles.buttontext}>Calcular</Text></TouchableOpacity>
-        <Text style={styles.resultado}>{this.state.resultado.toFixed(2)}</Text>
-        <Text style={[styles.resultado,{fontSize:20}]}>{this.state.resultadoText}</Text>
+  const calculate = useCallback(() => {
+    const imc = massa / Math.pow(altura, 2);
+    const text = textBaseadInIMC(imc);
+    console.log(text);
+    setResultadoText(text);
+    setResultado(imc);
+  }, [massa, altura, textBaseadInIMC]);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.entrada}>
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Altura"
+          keyboardType="numeric"
+          style={styles.input}
+          onChangeText={setAltura}
+        />
+        <TextInput
+          autoCapitalize="none"
+          placeholder="Massa"
+          keyboardType="numeric"
+          style={styles.input}
+          onChangeText={setMassa}
+        />
       </View>
-    );
-  }
+      <TouchableOpacity style={styles.button} onPress={calculate}>
+        <Text style={styles.buttontext}>Calcular</Text>
+      </TouchableOpacity>
+      <Text style={styles.resultado}>{resultado.toFixed(2)}</Text>
+      <Text style={[styles.resultado, { fontSize: 20 }]}>{resultadoText}</Text>
+    </View>
+  );
 }
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
-  entrada:{
-    flexDirection:'row',
+  entrada: {
+    flexDirection: "row",
   },
-  input:{
-    height:80,
-    textAlign:"center",
-    width:"50%",
-    fontSize:50,
-    marginTop:34,
+  input: {
+    height: 80,
+    textAlign: "center",
+    width: "50%",
+    fontSize: 50,
+    marginTop: 34,
   },
-  button:{
-   backgroundColor:"#2962ff",
+  button: {
+    backgroundColor: "#2962ff",
   },
-  buttontext:{
-    textAlign:"center",
-    padding:30,
-    fontSize:25,
-    fontWeight:'bold',
-    color:"white",
+  buttontext: {
+    textAlign: "center",
+    padding: 30,
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "white",
   },
-  resultado:{
-    alignSelf:"center",
-    color:"#757575",
-    fontSize:45,
-    fontWeight:'bold',
+  resultado: {
+    alignSelf: "center",
+    color: "#757575",
+    fontSize: 45,
+    fontWeight: "bold",
     padding: 6,
   },
 });
