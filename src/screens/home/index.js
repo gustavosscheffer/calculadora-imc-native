@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { typesIMC } from "./utils/variables";
 import { styles } from './utils/styles'
-import { set } from "react-native-reanimated";
 
 function Home() {
   const [altura, setAltura] = useState(null);
