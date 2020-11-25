@@ -26,7 +26,7 @@ function Home() {
     }
     const imc = massa / Math.pow(altura, 2);
     const text = textBasedInIMC(imc);
-    setResultadoText(text);1.801
+    setResultadoText(text);
     setResultado(imc);
   }, [massa, altura, textBasedInIMC]);
 
