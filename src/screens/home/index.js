@@ -1,20 +1,16 @@
 import React, { useState, useCallback } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { typesIMC } from "./utils/variables";
+import { styles } from './utils/styles'
+import { set } from "react-native-reanimated";
 
 function Home() {
-  const [altura, setAltura] = useState(0);
-  const [massa, setMassa] = useState(0);
+  const [altura, setAltura] = useState(null);
+  const [massa, setMassa] = useState(null);
   const [resultado, setResultado] = useState(0);
   const [resultadoText, setResultadoText] = useState("");
 
-  const textBaseadInIMC = useCallback((imc) => {
+  const textBasedInIMC = useCallback((imc) => {
     for (const item of typesIMC) {
       if (item.value > imc) {
         return item.title;
@@ -24,12 +20,16 @@ function Home() {
   }, []);
 
   const calculate = useCallback(() => {
+    if(!altura || !massa){
+      setResultado(0)
+      setResultadoText("")
+      return alert('Insira altura e massa')
+    }
     const imc = massa / Math.pow(altura, 2);
-    const text = textBaseadInIMC(imc);
-    console.log(text);
-    setResultadoText(text);
+    const text = textBasedInIMC(imc);
+    setResultadoText(text);1.801
     setResultado(imc);
-  }, [massa, altura, textBaseadInIMC]);
+  }, [massa, altura, textBasedInIMC]);
 
   return (
     <View style={styles.container}>
@@ -59,36 +59,4 @@ function Home() {
 }
 export default Home;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  entrada: {
-    flexDirection: "row",
-  },
-  input: {
-    height: 80,
-    textAlign: "center",
-    width: "50%",
-    fontSize: 50,
-    marginTop: 34,
-  },
-  button: {
-    backgroundColor: "#2962ff",
-  },
-  buttontext: {
-    textAlign: "center",
-    padding: 30,
-    fontSize: 25,
-    fontWeight: "bold",
-    color: "white",
-  },
-  resultado: {
-    alignSelf: "center",
-    color: "#757575",
-    fontSize: 45,
-    fontWeight: "bold",
-    padding: 6,
-  },
-});
+
